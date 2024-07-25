@@ -4,7 +4,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# Configure the PostgreSQL database
+# Configure the PostgreSQL database with the provided details
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     'postgresql://database_ycy5_user:y9t5XQhDbxswdCHtXyzBKKffHKjFcl1c@dpg-cqhblt2ju9rs738j0vi0-a:5432/database_ycy5'
 )
