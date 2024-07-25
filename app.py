@@ -65,4 +65,4 @@ def delete_all_entries():
 
 if __name__ == '__main__':
     # Bind the application to all interfaces on port 8000
-    app.run(host='0.0.0.0', port=8000, debug=false)  # Change 8000 to your desired port number
+    app.run(host='0.0.0.0', port=8000)  # Change 8000 to your desired port number
