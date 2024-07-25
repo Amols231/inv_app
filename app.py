@@ -1,23 +1,29 @@
 from flask import Flask, render_template, request, redirect, url_for
-import sqlite3
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
 
-# Database setup
-def init_db():
-    with sqlite3.connect('database.db') as conn:
-        c = conn.cursor()
-        c.execute('''CREATE TABLE IF NOT EXISTS entries (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        date TEXT,
-                        item TEXT,
-                        amount INTEGER,
-                        quantity INTEGER,
-                        total INTEGER)''')
-        conn.commit()
+# Configure the PostgreSQL database
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    'postgresql://database_ycy5_user:y9t5XQhDbxswdCHtXyzBKKffHKjFcl1c@dpg-cqhblt2ju9rs738j0vi0-a:5432/database_ycy5'
+)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-init_db()
+db = SQLAlchemy(app)
+
+# Define the database model
+class Entry(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.String, nullable=False)
+    item = db.Column(db.String, nullable=False)
+    amount = db.Column(db.Integer, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    total = db.Column(db.Integer, nullable=False)
+
+# Create the database tables
+with app.app_context():
+    db.create_all()
 
 @app.route('/')
 def index():
@@ -25,13 +31,9 @@ def index():
 
 @app.route('/view')
 def view_entries():
-    with sqlite3.connect('database.db') as conn:
-        c = conn.cursor()
-        c.execute('SELECT * FROM entries ORDER BY date ASC')
-        rows = c.fetchall()
-        c.execute('SELECT SUM(total) FROM entries')
-        grand_total = c.fetchone()[0] or 0
-    return render_template('view.html', rows=rows, grand_total=grand_total)
+    entries = Entry.query.order_by(Entry.date.asc()).all()
+    grand_total = db.session.query(db.func.sum(Entry.total)).scalar() or 0
+    return render_template('view.html', rows=entries, grand_total=grand_total)
 
 @app.route('/add', methods=['POST'])
 def add_entry():
@@ -40,29 +42,24 @@ def add_entry():
     amount = request.form['amount']
     quantity = request.form['quantity']
     total = int(amount) * int(quantity)
-    with sqlite3.connect('database.db') as conn:
-        c = conn.cursor()
-        c.execute('INSERT INTO entries (date, item, amount, quantity, total) VALUES (?, ?, ?, ?, ?)',
-                  (date, item, amount, quantity, total))
-        conn.commit()
+    new_entry = Entry(date=date, item=item, amount=amount, quantity=quantity, total=total)
+    db.session.add(new_entry)
+    db.session.commit()
     return redirect(url_for('index'))
 
 @app.route('/delete-entry/<int:id>', methods=['POST'])
 def delete_entry(id):
-    with sqlite3.connect('database.db') as conn:
-        c = conn.cursor()
-        c.execute('DELETE FROM entries WHERE id = ?', (id,))
-        conn.commit()
+    entry = Entry.query.get(id)
+    if entry:
+        db.session.delete(entry)
+        db.session.commit()
     return redirect(url_for('view_entries'))
 
 @app.route('/delete-all-entries', methods=['POST'])
 def delete_all_entries():
-    with sqlite3.connect('database.db') as conn:
-        c = conn.cursor()
-        c.execute('DELETE FROM entries')
-        conn.commit()
+    Entry.query.delete()
+    db.session.commit()
     return redirect(url_for('view_entries'))
 
 if __name__ == '__main__':
-    # Bind the application to all interfaces on port 8000
-    app.run(host='0.0.0.0', port=8000)  # Change 8000 to your desired port number
+    app.run(host='0.0.0.0', port=8000, debug=True)
