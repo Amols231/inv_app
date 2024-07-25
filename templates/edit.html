@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Entry</title>
+</head>
+<body>
+    <h1>Edit Entry</h1>
+    <form action="/edit/{{ row['id'] }}" method="POST">
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" value="{{ row['date'] }}" required><br><br>
+
+        <label for="item">Item:</label>
+        <select id="item" name="item" required>
+            <option value="Vadapav" {% if row['item'] == 'Vadapav' %}selected{% endif %}>Vadapav</option>
+            <option value="Patis" {% if row['item'] == 'Patis' %}selected{% endif %}>Patis</option>
+            <option value="Misal" {% if row['item'] == 'Misal' %}selected{% endif %}>Misal</option>
+            <option value="Idali" {% if row['item'] == 'Idali' %}selected{% endif %}>Idali</option>
+            <option value="Udid Wada Sambar" {% if row['item'] == 'Udid Wada Sambar' %}selected{% endif %}>Udid Wada Sambar</option>
+            <option value="Batata Vada Sambar" {% if row['item'] == 'Batata Vada Sambar' %}selected{% endif %}>Batata Vada Sambar</option>
+            <option value="Pavbhaji" {% if row['item'] == 'Pavbhaji' %}selected{% endif %}>Pavbhaji</option>
+            <option value="Other" {% if row['item'] == 'Other' %}selected{% endif %}>Other</option>
+        </select><br><br>
+
+        <label for="amount">Amount:</label>
+        <select id="amount" name="amount" required>
+            <option value="10" {% if row['amount'] == 10 %}selected{% endif %}>10</option>
+            <option value="20" {% if row['amount'] == 20 %}selected{% endif %}>20</option>
+            <option value="30" {% if row['amount'] == 30 %}selected{% endif %}>30</option>
+            <option value="40" {% if row['amount'] ==

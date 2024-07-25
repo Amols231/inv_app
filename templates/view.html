@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Entries</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .header {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .footer {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer .left, .footer .right {
+            font-size: 14px;
+        }
+        .footer .right {
+            text-align: right;
+        }
+        .footer .invoice {
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .action-btn {
+            cursor: pointer;
+            color: red;
+            border: none;
+            background: none;
+        }
+        .action-btn:hover {
+            text-decoration: underline;
+        }
+        .delete-all-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: red;
+        }
+        .delete-all-icon:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+		
+            <h1>WADHESHWAR SNACKS (JOSHI WADEWALE)</h1>
+			
+        </div>
+        
+        <div class="footer">
+            <div class="left">
+                <p>KASAR AMBOLI PUNE</p>
+                <p>Mobile No: 8888303083</p>
+                <p>BILL TO:</p>
+                <p>Customer name: HI-TECH BIOSCIENCES INDIA PVT LTD</p>
+            </div>
+            <div class="right">
+                <p id="currentDate"></p>
+                <p id="currentTime"></p>
+                <p id="invoiceNo"></p>
+            </div>
+        </div>
+
+        <table class="table table-bordered mt-4">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Item</th>
+                    <th>Amount</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    <td>
+                        <a href="#" class="action-btn" onclick="event.preventDefault(); if(confirm('Are you sure you want to delete this entry?')) document.getElementById('delete-form-{{ row['id'] }}').submit();">
+                            {{ row['id'] }}
+                        </a>
+                        <form id="delete-form-{{ row['id'] }}" action="{{ url_for('delete_entry', id=row['id']) }}" method="POST" style="display: none;"></form>
+                    </td>
+                    <td>{{ row['date'] }}</td>
+                    <td>{{ row['item'] }}</td>
+                    <td>{{ row['amount'] }}</td>
+                    <td>{{ row['quantity'] }}</td>
+                    <td>{{ row['total'] }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="5" class="text-right font-weight-bold">Grand Total:</td>
+                    <td class="font-weight-bold">{{ grand_total }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Delete All Entries Icon -->
+        <form action="/delete-all-entries" method="POST" style="display: inline;">
+            <button type="submit" class="delete-all-icon" title="Delete All Entries">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // Function to format date in DDMMYYYY format
+        function formatDate(date) {
+            let day = String(date.getDate()).padStart(2, '0');
+            let month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+            let year = date.getFullYear();
+            return `${day}${month}${year}`;
+        }
+
+        // Set current date and time in the footer
+        document.addEventListener("DOMContentLoaded", function() {
+            let now = new Date();
+            let dateElement = document.getElementById('currentDate');
+            let timeElement = document.getElementById('currentTime');
+            let invoiceElement = document.getElementById('invoiceNo');
+            
+            dateElement.textContent = now.toLocaleDateString();
+            timeElement.textContent = now.toLocaleTimeString();
+            invoiceElement.textContent = `Invoice No: ${formatDate(now)}`;
+        });
+    </script>
+</body>
+</html>
