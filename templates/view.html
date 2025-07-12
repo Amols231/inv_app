@@ -65,7 +65,8 @@
             <div class="right">
                 <p id="currentDate"></p>
                 <p id="currentTime"></p>
-                <p id="invoiceNo"></p>
+                <p <label for="invoiceInput">Invoice No:</label>
+<input type="text" id="invoiceInput" placeholder="Enter Invoice Number" />></p>
             </div>
         </div>
 
@@ -129,7 +130,7 @@
             
             dateElement.textContent = now.toLocaleDateString();
             timeElement.textContent = now.toLocaleTimeString();
-            invoiceElement.textContent = `Invoice No:`;<input type="text" id="invoiceNumberInput" placeholder="Enter invoice number" />
+            invoiceElement.textContent = `Invoice No: ${formatDate(now)}`;
 		
         });
     </script>
