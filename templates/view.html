@@ -129,7 +129,8 @@
             
             dateElement.textContent = now.toLocaleDateString();
             timeElement.textContent = now.toLocaleTimeString();
-            invoiceElement.textContent = `Invoice No: ${formatDate(now)}`;
+            invoiceElement.textContent = `Invoice No:`;<input type="text" id="invoiceNumberInput" placeholder="Enter invoice number" />
+		
         });
     </script>
 </body>
