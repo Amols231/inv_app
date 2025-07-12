@@ -88,7 +88,7 @@
                         <a href="#" class="action-btn" onclick="event.preventDefault(); if(confirm('Are you sure you want to delete this entry?')) document.getElementById('delete-form-{{ row['id'] }}').submit();">
                             {{ row['id'] }}
                         </a>
-                        <form id="delete-form-{{ row['id'] }}" action="{{ url_for('delete_entry', id=row['id']) }}" method="POST" style="display: none;"></form>
+                        <form id="delete-form-{{ loop.index }}" action="{{ url_for('delete_entry', id=row['id']) }}" method="POST" style="display: none;"></form>
                     </td>
                     <td>{{ row['date'] }}</td>
                     <td>{{ row['item'] }}</td>
